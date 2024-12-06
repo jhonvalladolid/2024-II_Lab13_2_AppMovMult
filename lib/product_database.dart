@@ -23,8 +23,9 @@ class ProductDatabase {
     final path = join(databasePath, 'products.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDatabase,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -35,11 +36,24 @@ class ProductDatabase {
         ${ProductFields.name} ${ProductFields.textType},
         ${ProductFields.description} ${ProductFields.textType},
         ${ProductFields.price} ${ProductFields.doubleType},
-        ${ProductFields.stock} ${ProductFields.intType}
+        ${ProductFields.stock} ${ProductFields.intType},
+        ${ProductFields.image} ${ProductFields.textType}  -- Añadimos la columna image
       )
     ''');
   }
 
+  
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      
+      await db.execute('''
+        ALTER TABLE ${ProductFields.tableName} 
+        ADD COLUMN ${ProductFields.image} ${ProductFields.textType};
+      ''');
+    }
+  }
+
+  
   Future<Product> create(Product product) async {
     final db = await database;
     final id = await db.insert(ProductFields.tableName, product.toJson());

@@ -5,6 +5,7 @@ class ProductFields {
     description,
     price,
     stock,
+    image, // Añadimos 'image' a los campos
   ];
 
   static const String tableName = 'products';
@@ -17,6 +18,7 @@ class ProductFields {
   static const String description = 'description';
   static const String price = 'price';
   static const String stock = 'stock';
+  static const String image = 'image'; // Campo para la imagen
 }
 
 class Product {
@@ -25,6 +27,7 @@ class Product {
   final String description;
   final double price;
   final int stock;
+  final String image; // Añadimos el campo image
 
   Product({
     this.id,
@@ -32,6 +35,7 @@ class Product {
     required this.description,
     required this.price,
     required this.stock,
+    required this.image, // Lo pasamos en el constructor
   });
 
   Map<String, Object?> toJson() {
@@ -41,6 +45,7 @@ class Product {
       ProductFields.description: description,
       ProductFields.price: price,
       ProductFields.stock: stock,
+      ProductFields.image: image, // Guardamos la imagen
     };
   }
 
@@ -51,6 +56,7 @@ class Product {
       description: json[ProductFields.description] as String,
       price: json[ProductFields.price] as double,
       stock: json[ProductFields.stock] as int,
+      image: json[ProductFields.image] as String, // Cargamos la imagen
     );
   }
 
@@ -60,6 +66,7 @@ class Product {
     String? description,
     double? price,
     int? stock,
+    String? image,
   }) {
     return Product(
       id: id ?? this.id,
@@ -67,6 +74,7 @@ class Product {
       description: description ?? this.description,
       price: price ?? this.price,
       stock: stock ?? this.stock,
+      image: image ?? this.image, // Se pasa la imagen en la copia
     );
   }
 }

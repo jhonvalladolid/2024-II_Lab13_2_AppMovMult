@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'product_database.dart';
 import 'product.dart';
+import 'dart:io';
 
 class ProductDetailView extends StatefulWidget {
   final int? productId;
@@ -13,11 +15,13 @@ class ProductDetailView extends StatefulWidget {
 
 class _ProductDetailViewState extends State<ProductDetailView> {
   final ProductDatabase productDatabase = ProductDatabase.instance;
+  final ImagePicker _picker = ImagePicker();
 
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   late TextEditingController priceController;
   late TextEditingController stockController;
+  late String imagePath;
 
   bool isLoading = false;
   bool isNewProduct = false;
@@ -36,6 +40,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
     descriptionController = TextEditingController();
     priceController = TextEditingController();
     stockController = TextEditingController();
+    imagePath = '';
   }
 
   refreshProduct() async {
@@ -46,6 +51,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
       descriptionController.text = product.description;
       priceController.text = product.price.toString();
       stockController.text = product.stock.toString();
+      imagePath = product.image;
     });
   }
 
@@ -59,6 +65,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
       description: descriptionController.text,
       price: double.parse(priceController.text),
       stock: int.parse(stockController.text),
+      image: imagePath,
     );
 
     if (isNewProduct) {
@@ -77,6 +84,15 @@ class _ProductDetailViewState extends State<ProductDetailView> {
   deleteProduct() async {
     await productDatabase.delete(product.id!);
     Navigator.pop(context);
+  }
+
+  Future<void> pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery); // Seleccionamos imagen
+    if (image != null) {
+      setState(() {
+        imagePath = image.path;  // Guardamos el path de la imagen seleccionada
+      });
+    }
   }
 
   @override
@@ -108,6 +124,14 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                     controller: stockController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(labelText: 'Stock'),
+                  ),
+                  SizedBox(height: 10),
+                  imagePath.isEmpty
+                      ? const Text('No hay imagen seleccionada')
+                      : Image.file(File(imagePath), width: 100, height: 100),
+                  TextButton(
+                    onPressed: pickImage,
+                    child: const Text('Seleccionar Imagen'),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,

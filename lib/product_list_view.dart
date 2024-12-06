@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'product_database.dart';
 import 'product.dart';
 import 'product_detail_view.dart';
+import 'dart:io';
 
 class ProductListView extends StatefulWidget {
   const ProductListView({super.key});
@@ -50,6 +51,9 @@ class _ProductListViewState extends State<ProductListView> {
                   onTap: () => goToProductDetailView(id: product.id),
                   child: Card(
                     child: ListTile(
+                      leading: product.image.isEmpty
+                          ? null
+                          : Image.file(File(product.image), width: 50, height: 50, fit: BoxFit.cover),
                       title: Text(product.name),
                       subtitle: Text("\$${product.price} - ${product.stock} en stock"),
                     ),
